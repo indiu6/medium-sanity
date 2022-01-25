@@ -3,7 +3,7 @@ import Header from '../components/Header'
 
 export default function Home() {
   return (
-    <div className="">
+    <div className="mx-auto max-w-7xl">
       <Head>
         <title>Medium Blog</title>
         <link rel="icon" href="/favicon.ico" />
