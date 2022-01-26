@@ -1,7 +1,16 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import Header from '../components/Header'
+import { sanityClient, urlFor } from '../sanity'
+import { Post } from '../typings'
 
-export default function Home() {
+interface Props {
+  posts: [Post]
+}
+
+export default function Home({ posts }: Props) {
+  console.log(posts)
+
   return (
     <div className="mx-auto max-w-7xl">
       <Head>
@@ -31,6 +40,56 @@ export default function Home() {
           alt="m logo"
         />
       </div>
+
+      {/* Posts */}
+      <div className="grid grid-cols-1 sm:grid-cols-2">
+        {posts.map((post) => (
+          <Link key={post._id} href={`/post/${post.slug.current}`}>
+            <div>
+              {post.mainImage && (
+                <img src={urlFor(post.mainImage).url()!} alt="" />
+              )}
+
+              <div className="flex justify-between bg-white p-5">
+                <div>
+                  <p>{post.title}</p>
+                  <p>
+                    {post.description} by {post.author.name}
+                  </p>
+                </div>
+
+                <img
+                  className="h-12 w-12 rounded-full"
+                  src={urlFor(post.author.image).url()!}
+                  alt=""
+                />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   )
+}
+
+export const getServerSideProps = async () => {
+  const query = `*[_type == "post"]{
+    _id,
+    title,
+    author -> {
+      name,
+      image
+    },
+    description,
+    mainImage,
+    slug
+  }`
+
+  const posts = await sanityClient.fetch(query)
+
+  return {
+    props: {
+      posts,
+    },
+  }
 }
