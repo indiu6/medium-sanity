@@ -66,6 +66,8 @@ function Post({ post }: Props) {
           />
         </div>
       </article>
+
+      <hr className="my-5 mx-auto max-w-lg border border-yellow-500" />
     </main>
   )
 }
@@ -97,7 +99,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const query = `*[_type == "post" && slug.current == $slug][0]{
     _id,
-    _createdAt
+    _createdAt,
     title,
     author -> {
       name,
@@ -105,7 +107,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
     'comments': *[
       _type == "comment" &&
-      post._ref = ^._id &&
+      post._ref == ^._id &&
       approved == true],
     description,
     mainImage,
